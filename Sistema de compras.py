@@ -1,84 +1,105 @@
 class Producto:
     def __init__(self, nombre, precio):
-        self._nombre = nombre
-        self._precio = precio
+        self._nombre = nombre  
+        self._precio = precio  
 
     def obtener_precio(self):
         return self._precio
 
-    def __str__(self):
+    def mostrar_info(self):
         return f"{self._nombre}: ${self._precio}"
 
-class Camisa(Producto):
+class Ropa(Producto):
     def __init__(self, nombre, precio, talla):
         super().__init__(nombre, precio)
-        self._talla = talla 
+        self._talla = talla  
 
-    def __str__(self):
-        return f"Camisa {self._nombre} ({self._talla}): ${self._precio}"
+    def mostrar_info(self):
+        return f"{super().mostrar_info()} - Talla: {self._talla}"
 
-class Pantalon(Producto):
-    def __init__(self, nombre, precio, talla):
-        super().__init__(nombre, precio)
-        self._talla = talla
+class Camisa(Ropa):
+    def __init__(self, nombre, precio, talla, tipo_tela):
+        super().__init__(nombre, precio, talla) 
+        self._tipo_tela = tipo_tela  
 
-    def __str__(self):
-        return f"Pantalón {self._nombre} ({self._talla}): ${self._precio}"
+    def mostrar_info(self):
+        return f"Camisa {super().mostrar_info()} - Tipo de tela: {self._tipo_tela}"
 
-class Zapato(Producto):
-    def __init__(self, nombre, precio, talla):
-        super().__init__(nombre, precio)
-        self._talla = talla
+class Pantalon(Ropa):
+    def __init__(self, nombre, precio, talla, tipo_pantalon):
+        super().__init__(nombre, precio, talla)  
+        self._tipo_pantalon = tipo_pantalon  
 
-    def __str__(self):
-        return f"Zapato {self._nombre} ({self._talla}): ${self._precio}"
+    def mostrar_info(self):
+        return f"Pantalón {super().mostrar_info()} - Tipo: {self._tipo_pantalon}"
 
-class Categoria:
-    def __init__(self, nombre):
-        self._nombre = nombre
-        self._productos = []
+class Zapato(Ropa):
+    def __init__(self, nombre, precio, talla, tipo_zapato):
+        super().__init__(nombre, precio, talla)  
+        self._tipo_zapato = tipo_zapato  
+
+    def mostrar_info(self):
+        return f"Zapato {super().mostrar_info()} - Tipo: {self._tipo_zapato}"
+
+class Carrito:
+    def __init__(self):
+        self._productos = []  
 
     def agregar_producto(self, producto):
         self._productos.append(producto)
 
-    def mostrar_productos(self):
-        print(f"Categoría: {self._nombre}")
+    def calcular_total(self):
+        return sum(producto.obtener_precio() for producto in self._productos)
+
+    def mostrar_compra(self):
         for producto in self._productos:
-            print(producto)
+            print(producto.mostrar_info())
+        print(f"Total a pagar: ${self.calcular_total():.2f}")
 
 class Tienda:
     def __init__(self):
-        self._categorias = []
+        self._productos_disponibles = []  
 
-    def agregar_categoria(self, categoria):
-        self._categorias.append(categoria)
+    def agregar_producto(self, producto):
+        self._productos_disponibles.append(producto)
 
-    def mostrar_categorias(self):
-        for categoria in self._categorias:
-            categoria.mostrar_productos()
+    def mostrar_productos(self):
+        print("Productos disponibles:")
+        for idx, producto in enumerate(self._productos_disponibles):
+            print(f"{idx + 1}. {producto.mostrar_info()}")
 
-    def procesar_compra(self, productos_seleccionados):
-        total = sum(producto.obtener_precio() for producto in productos_seleccionados)
-        print(f"Total a pagar: ${total:.2f}")
+    def procesar_compra(self):
+        carrito = Carrito()
+        while True:
+            self.mostrar_productos()
+            seleccion = input("Selecciona un producto (o 'salir' para finalizar): ")
+            if seleccion.lower() == 'salir':
+                break
+            try:
+                indice = int(seleccion) - 1
+                if 0 <= indice < len(self._productos_disponibles):
+                    carrito.agregar_producto(self._productos_disponibles[indice])
+                    print("Producto agregado al carrito.")
+                else:
+                    print("Selección inválida. Inténtalo de nuevo.")
+            except ValueError:
+                print("Por favor, ingresa un número válido.")
 
+        print("\nResumen de la compra:")
+        carrito.mostrar_compra()
 
-camisa1 = Camisa("Camisa Blanca", 29.99, "M")
-pantalon1 = Pantalon("Pantalón Negro", 49.99, "L")
-zapato1 = Zapato("Zapato Deportivo", 89.99, "42")
+# Ejemplo de uso
+if __name__ == "__main__":
+    # Crear productos
+    camisa1 = Camisa("Camisa Blanca", 29.99, "M", "Algodón")
+    pantalon1 = Pantalon("Pantalón Negro", 49.99, "L", "Chino")
+    zapato1 = Zapato("Zapato Deportivo", 89.99, "42", "Deportivo")
 
-categoria_ropa = Categoria("Ropa")
-categoria_calzado = Categoria("Calzado")
+    # Crear tienda y agregar productos
+    tienda = Tienda()
+    tienda.agregar_producto(camisa1)
+    tienda.agregar_producto(pantalon1)
+    tienda.agregar_producto(zapato1)
 
-categoria_ropa.agregar_producto(camisa1)
-categoria_ropa.agregar_producto(pantalon1)
-categoria_calzado.agregar_producto(zapato1)
-
-tienda = Tienda()
-tienda.agregar_categoria(categoria_ropa)
-tienda.agregar_categoria(categoria_calzado)
-
-tienda.mostrar_categorias()
-
-
-productos_a_comprar = [camisa1, pantalon1] 
-tienda.procesar_compra(productos_a_comprar)
+    # Procesar compra
+    tienda.procesar_compra()
