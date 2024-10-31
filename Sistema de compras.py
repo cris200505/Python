@@ -88,18 +88,16 @@ class Tienda:
         print("\nResumen de la compra:")
         carrito.mostrar_compra()
 
-# Ejemplo de uso
 if __name__ == "__main__":
-    # Crear productos
+
     camisa1 = Camisa("Camisa Blanca", 29.99, "M", "Algodón")
     pantalon1 = Pantalon("Pantalón Negro", 49.99, "L", "Chino")
     zapato1 = Zapato("Zapato Deportivo", 89.99, "42", "Deportivo")
 
-    # Crear tienda y agregar productos
     tienda = Tienda()
     tienda.agregar_producto(camisa1)
     tienda.agregar_producto(pantalon1)
     tienda.agregar_producto(zapato1)
 
-    # Procesar compra
+
     tienda.procesar_compra()
